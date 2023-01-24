@@ -98,15 +98,20 @@ int main(void)
   MX_TIM2_Init();
   MX_USART2_UART_Init();
   MX_TIM1_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   hc_sr04_init(&distance_sensor, &htim1, &htim2, TIM_CHANNEL_3);
+  HAL_TIM_Base_Start(&htim3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+	  move_clockwise(256, 1000);  // 256 half revolution
+	  HAL_Delay(100);
+	  move_anticlockwise(256, 1000); // 128 quarter revolution
+	  HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
