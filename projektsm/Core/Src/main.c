@@ -46,6 +46,7 @@
 /* USER CODE BEGIN PV */
 struct us_sensor_str distance_sensor;
 uint32_t echo_us;
+uint32_t x;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,13 +59,31 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-	if(TIM1 == htim->Instance)
-	{
 
-		echo_us = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2);
-		distance_sensor.distance_cm = hc_sr04_convert_us_to_cm(echo_us);
+}
+
+
+/**
+  * @brief  EXTI line detection callbacks.
+  * @param  GPIO_Pin Specifies the pins connected EXTI line
+  * @retval None
+  */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == ECHO_Pin){
+		_Bool state = HAL_GPIO_ReadPin(ECHO_GPIO_Port, ECHO_Pin);
+		if(state == 1){
+			__HAL_TIM_SET_COUNTER(&htim5, 0);
+			HAL_TIM_Base_Start(&htim5);
+
+		}
+		else{
+			HAL_TIM_Base_Stop(&htim5);
+			x = __HAL_TIM_GET_COUNTER(&htim5);
+		}
 	}
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -99,9 +118,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
-  hc_sr04_init(&distance_sensor, &htim1, &htim2, TIM_CHANNEL_3);
-  HAL_TIM_Base_Start(&htim3);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
