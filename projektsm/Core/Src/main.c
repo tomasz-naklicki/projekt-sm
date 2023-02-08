@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -25,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "hc_sr04.h"
+#include "DC_Motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +49,9 @@
 struct us_sensor_str distance_sensor;
 uint32_t echo_us;
 uint32_t x;
+struct Motor motor;
+_Bool dir1_state = 0;
+_Bool dir2_state = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,11 +62,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-{
-
-}
-
 
 /**
   * @brief  EXTI line detection callbacks.
@@ -119,18 +119,30 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_TIM5_Init();
+  MX_ADC1_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  //HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, 1);
+  //HAL_GPIO_WritePin(DIR2_GPIO_Port, DIR2_Pin, 0);
+  Motor_INIT(&motor, &htim1, TIM_CHANNEL_1, DIR1_GPIO_Port, DIR2_GPIO_Port, DIR1_Pin, DIR2_Pin);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  move_clockwise(256, 1000);  // 256 half revolution
-	  HAL_Delay(100);
-	  move_anticlockwise(256, 1000); // 128 quarter revolution
-	  HAL_Delay(100);
+	  Motor_MOVE(&motor, -100);
+	  HAL_Delay(3000);
+	  Motor_MOVE(&motor, 100);
+	  HAL_Delay(3000);
+
+
+	  //dir1_state = HAL_GPIO_ReadPin(DIR1_GPIO_Port, DIR1_Pin);
+	  //dir2_state = HAL_GPIO_ReadPin(DIR2_GPIO_Port, DIR2_Pin);
+	  //HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
