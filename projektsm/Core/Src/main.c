@@ -27,6 +27,8 @@
 /* USER CODE BEGIN Includes */
 #include "hc_sr04.h"
 #include "DC_Motor.h"
+#include "arm_math.h"
+#include "control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,10 +50,13 @@
 /* USER CODE BEGIN PV */
 struct us_sensor_str distance_sensor;
 uint32_t echo_us;
-uint32_t x;
+float value;
 struct Motor motor;
-_Bool dir1_state = 0;
-_Bool dir2_state = 0;
+struct Controller controller;
+uint32_t x;
+float lmao;
+int i=0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,6 +75,7 @@ void SystemClock_Config(void);
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+
 	if(GPIO_Pin == ECHO_Pin){
 		_Bool state = HAL_GPIO_ReadPin(ECHO_GPIO_Port, ECHO_Pin);
 		if(state == 1){
@@ -80,6 +86,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		else{
 			HAL_TIM_Base_Stop(&htim5);
 			x = __HAL_TIM_GET_COUNTER(&htim5);
+			if(x/58.0f < 1000) value = x/58.0f;
 		}
 	}
 }
@@ -122,11 +129,12 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-  //HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   //HAL_GPIO_WritePin(DIR1_GPIO_Port, DIR1_Pin, 1);
   //HAL_GPIO_WritePin(DIR2_GPIO_Port, DIR2_Pin, 0);
   Motor_INIT(&motor, &htim1, TIM_CHANNEL_1, DIR1_GPIO_Port, DIR2_GPIO_Port, DIR1_Pin, DIR2_Pin);
+  control_INIT(&controller, 100.0f, 80.0f, 10.0f, 2.0f);
 
   /* USER CODE END 2 */
 
@@ -134,11 +142,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  Motor_MOVE(&motor, -100);
-	  HAL_Delay(3000);
-	  Motor_MOVE(&motor, 100);
-	  HAL_Delay(3000);
+	  lmao = control_GET_SIGNAL(&controller, value, 10.0f);
+	  //Motor_MOVE(&motor, lmao);
+	  //Motor_MOVE(&motor, 150.0f);
+	  HAL_Delay(50);
 
+	  //Motor_MOVE(&motor, lmao);
+	  //HAL_Delay(100);
 
 	  //dir1_state = HAL_GPIO_ReadPin(DIR1_GPIO_Port, DIR1_Pin);
 	  //dir2_state = HAL_GPIO_ReadPin(DIR2_GPIO_Port, DIR2_Pin);

@@ -1,0 +1,2 @@
+../Core/Src/control.c:10:6:control_INIT	32	static
+../Core/Src/control.c:18:7:control_GET_SIGNAL	32	static
