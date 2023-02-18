@@ -133,7 +133,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
   Motor_INIT(&motor, &htim1, TIM_CHANNEL_1, DIR1_GPIO_Port, DIR2_GPIO_Port, DIR1_Pin, DIR2_Pin);
-  control_INIT(&controller, 100.0f, 60.0f, 10.0f, 2.0f);
+  control_INIT(&controller, 100.0f, 60.0f, 5.0f, 0.5f);
 
   /* USER CODE END 2 */
 
@@ -141,7 +141,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  lmao = control_GET_SIGNAL(&controller, value, 10.0f);
+	  lmao = control_GET_SIGNAL(&controller, value, 15.0f);
 	  //Motor_MOVE(&motor, 100.0f);
 	  /*for(i=100;i>=0;i--){
 		  Motor_MOVE(&motor, i);
@@ -154,8 +154,8 @@ int main(void)
 	  }*/
 
 
-	  //Motor_MOVE(&motor, lmao);
-	  //HAL_Delay(100);
+	  Motor_MOVE(&motor, lmao);
+	  HAL_Delay(100);
 
 	  //dir1_state = HAL_GPIO_ReadPin(DIR1_GPIO_Port, DIR1_Pin);
 	  //dir2_state = HAL_GPIO_ReadPin(DIR2_GPIO_Port, DIR2_Pin);

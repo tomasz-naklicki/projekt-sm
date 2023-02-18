@@ -9,7 +9,7 @@
 #define INC_CONTROL_H_
 
 #include "main.h"
-#include "stdlib.h"
+#include "pid_control.h"
 
 struct Controller{
 	float MAX_SIGNAL;
@@ -19,6 +19,8 @@ struct Controller{
 	float prev_error;
 	float prev_distance;
 	float current_velocity;
+
+	PID_HandleTypeDef PID;
 };
 
 void control_INIT(struct Controller* controller, float MAX_SIGNAL, float MIN_SIGNAL, float MAX_ERROR, float MIN_ERROR);
