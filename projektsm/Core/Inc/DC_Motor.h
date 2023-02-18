@@ -21,7 +21,6 @@ struct Motor{
 	float DUTY;
 };
 void Motor_INIT(struct Motor* motor, TIM_HandleTypeDef* htim, uint32_t PWM_CHANNEL, GPIO_TypeDef* DIR1_PORT, GPIO_TypeDef* DIR2_PORT, uint16_t DIR1_PIN, uint16_t DIR2_PIN);
-//void motor_update_duty(struct Motor* motor, float duty);
 void Motor_SET_DIR(struct Motor* motor, _Bool dir);
 void Motor_MOVE(struct Motor* motor, float  duty);
 void Motor_STOP(struct Motor* motor);

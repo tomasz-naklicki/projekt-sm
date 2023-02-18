@@ -17,11 +17,14 @@ struct Controller{
 	float MAX_ERROR;
 	float MIN_ERROR;
 	float prev_error;
+	float prev_distance;
+	float current_velocity;
 };
 
 void control_INIT(struct Controller* controller, float MAX_SIGNAL, float MIN_SIGNAL, float MAX_ERROR, float MIN_ERROR);
 
 float control_GET_SIGNAL(struct Controller*, float y, float y_ref);
 
+float control_GET_VELOCITY(struct Controller*, float distance);
 
 #endif /* INC_CONTROL_H_ */

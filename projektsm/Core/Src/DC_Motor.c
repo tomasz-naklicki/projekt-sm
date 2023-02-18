@@ -7,7 +7,7 @@
 #include "DC_Motor.h"
 
 void Motor_INIT(struct Motor* motor, TIM_HandleTypeDef* TIMER, uint32_t PWM_CHANNEL, GPIO_TypeDef* DIR1_PORT, GPIO_TypeDef* DIR2_PORT, uint16_t DIR1_PIN, uint16_t DIR2_PIN){
-	motor->DUTY = 100;
+	motor->DUTY = 0.0f;
 	motor->TIMER = TIMER;
 	motor->PWM_CHANNEL = PWM_CHANNEL;
 	motor->DIR1_PORT = DIR1_PORT;
@@ -17,7 +17,7 @@ void Motor_INIT(struct Motor* motor, TIM_HandleTypeDef* TIMER, uint32_t PWM_CHAN
 
 	Motor_STOP(motor);
 }
-//void motor_update_duty(struct Motor* motor, float duty);
+
 void Motor_SET_DIR(struct Motor* motor, _Bool dir){
 	if(dir == 1){
 		HAL_GPIO_WritePin(motor->DIR1_PORT, motor->DIR1_PIN, 1);
