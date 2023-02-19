@@ -59,7 +59,7 @@ struct Controller controller;
 uint32_t x;
 float lmao;
 int i=0;
-char buffer[3] = {'0', '2', '0');
+char buffer[4] = {'0', '2', '0', '\0'};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,8 +94,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-	if(huart->Instance == UART2){
+/*void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	if(huart->Instance == USART2){
 		char distance[3];
 
 		sscanf((char*)buffer, "%c%c%c", &distance[0], &distance[1], &distance[2]);
@@ -106,7 +106,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 
 
 	}
-}
+}*/
 /* USER CODE END 0 */
 
 /**
@@ -148,9 +148,11 @@ int main(void)
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
+ // HAL_UART_Receive_IT(&huart2, (uint8_t*)buffer, strlen(buffer));
+
   Motor_INIT(&motor, &htim1, TIM_CHANNEL_1, DIR1_GPIO_Port, DIR2_GPIO_Port, DIR1_Pin, DIR2_Pin);
   control_INIT(&controller, 100.0f, 60.0f, 5.0f, 0.5f);
-
+  const unsigned char* msg = U"21.37";
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -159,10 +161,13 @@ int main(void)
   {
 	  lmao = control_GET_SIGNAL(&controller, value, y_ref);
 
+	  HAL_UART_Transmit(&huart2, msg, sizeof(msg), 10);
+	  HAL_Delay(100);
 
-	  Motor_MOVE(&motor, lmao);
+	  //Motor_MOVE(&motor, lmao);
 
-	  HAL_Delay(10);
+	  //HAL_Delay(10);
+
 
     /* USER CODE END WHILE */
 

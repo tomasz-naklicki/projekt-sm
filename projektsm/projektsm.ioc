@@ -79,6 +79,7 @@ NVIC.TIM1_CC_IRQn=true\:0\:0\:false\:false\:true\:true\:true\:true
 NVIC.TIM2_IRQn=true\:0\:0\:false\:false\:true\:true\:true\:true
 NVIC.TIM3_IRQn=true\:0\:0\:false\:false\:true\:true\:true\:true
 NVIC.TIM4_IRQn=true\:0\:0\:false\:false\:true\:true\:true\:true
+NVIC.USART2_IRQn=true\:0\:0\:false\:false\:true\:true\:true\:true
 NVIC.UsageFault_IRQn=true\:0\:0\:false\:false\:true\:false\:false\:false
 PA0/WKUP.Signal=S_TIM2_CH1_ETR
 PA1.Signal=ADCx_IN1

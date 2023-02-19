@@ -22,7 +22,7 @@ void control_INIT(struct Controller* controller, float MAX_SIGNAL, float MIN_SIG
 
 float control_GET_SIGNAL(struct Controller* controller, float y, float y_ref){
 	float error = y_ref - y;
-	float duty;
+	float duty = error/5.0 * 100;
 	if(abs(error) <= controller->MIN_ERROR){
 		controller->start = 0;
 		return 0;
