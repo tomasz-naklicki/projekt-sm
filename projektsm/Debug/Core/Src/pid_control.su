@@ -1,2 +1,0 @@
-../Core/Src/pid_control.c:11:6:PID_Init	16	static
-../Core/Src/pid_control.c:17:7:PID_GET_SIGNAL	40	static

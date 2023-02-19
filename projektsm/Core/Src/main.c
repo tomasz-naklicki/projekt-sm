@@ -29,6 +29,8 @@
 #include "DC_Motor.h"
 #include "arm_math.h"
 #include "control.h"
+#include "string.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,12 +53,13 @@
 struct us_sensor_str distance_sensor;
 uint32_t echo_us;
 float value;
+float y_ref = 20.0f;
 struct Motor motor;
 struct Controller controller;
 uint32_t x;
 float lmao;
 int i=0;
-
+char buffer[3] = {'0', '2', '0');
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -91,6 +94,19 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	if(huart->Instance == UART2){
+		char distance[3];
+
+		sscanf((char*)buffer, "%c%c%c", &distance[0], &distance[1], &distance[2]);
+		int temp = atoi(distance);
+		y_ref = (float)temp;
+
+		HAL_UART_Receive_IT(&huart2, (uint8_t*)buffer, strlen(buffer));
+
+
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -141,25 +157,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  lmao = control_GET_SIGNAL(&controller, value, 15.0f);
-	  //Motor_MOVE(&motor, 100.0f);
-	  /*for(i=100;i>=0;i--){
-		  Motor_MOVE(&motor, i);
-		  if(i==60){
-			  while(1){
-				  HAL_Delay(50);
-			  }
-		  }
-		  HAL_Delay(500);
-	  }*/
+	  lmao = control_GET_SIGNAL(&controller, value, y_ref);
 
 
 	  Motor_MOVE(&motor, lmao);
-	  HAL_Delay(100);
 
-	  //dir1_state = HAL_GPIO_ReadPin(DIR1_GPIO_Port, DIR1_Pin);
-	  //dir2_state = HAL_GPIO_ReadPin(DIR2_GPIO_Port, DIR2_Pin);
-	  //HAL_Delay(100);
+	  HAL_Delay(10);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
