@@ -37,8 +37,8 @@ float control_GET_SIGNAL(struct Controller* controller, float y, float y_ref){
 	}
 
 	else if(controller->start == 1){
-		if(abs(duty) <= 86 && error<0) return 86.0f;
-		else if(abs(duty) <= 86 && error>0) return -86.0f;
+		if(abs(duty) <= 94 && error<0) return 94.0f;
+		else if(abs(duty) <= 94 && error>0) return -94.0f;
 	}
 	else{
 		if(error>0){

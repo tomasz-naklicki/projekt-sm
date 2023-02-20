@@ -31,6 +31,7 @@
 #include "control.h"
 #include "string.h"
 #include "stdio.h"
+#include "lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,6 +61,12 @@ uint32_t x;
 float lmao;
 int i=0;
 char buffer[4] = {'0', '2', '0', '\0'};
+char lcdbuffer[32] = {0};
+HAL_StatusTypeDef status = 0;
+uint8_t rx_buffer[32];
+uint16_t msg_len;
+
+float jebac_usart = 0.0f;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,23 +97,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			HAL_TIM_Base_Stop(&htim5);
 			x = __HAL_TIM_GET_COUNTER(&htim5);
 			if(x/58.0f < 1000) value = x/58.0f;
+
+			//LCD_Put_Cursor(0,0);
+			//LCD_Send_string(lcdbuffer);
 		}
 	}
 }
 
-/*void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-	if(huart->Instance == USART2){
-		char distance[3];
-
-		sscanf((char*)buffer, "%c%c%c", &distance[0], &distance[1], &distance[2]);
-		int temp = atoi(distance);
-		y_ref = (float)temp;
-
-		HAL_UART_Receive_IT(&huart2, (uint8_t*)buffer, strlen(buffer));
-
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	if(huart == &huart3){
+		if(rx_buffer[0] == 'R'){
+			sscanf((char*)&rx_buffer[1], "%f", &jebac_usart);
+		}
 	}
-}*/
+	else{
+		uint8_t tx_buffer[64];
+		int resp_len = sprintf((char*)tx_buffer, "{ \"Wartosc\":%f }\r", jebac_usart);
+		HAL_UART_Transmit(&huart3, tx_buffer, resp_len, 10);
+	}
+	HAL_UART_Receive_IT(&huart3, rx_buffer, 6);
+}
 /* USER CODE END 0 */
 
 /**
@@ -122,7 +132,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -144,15 +154,20 @@ int main(void)
   MX_TIM5_Init();
   MX_ADC1_Init();
   MX_TIM4_Init();
+  MX_TIM8_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-
- // HAL_UART_Receive_IT(&huart2, (uint8_t*)buffer, strlen(buffer));
+  LCD_Init();
 
   Motor_INIT(&motor, &htim1, TIM_CHANNEL_1, DIR1_GPIO_Port, DIR2_GPIO_Port, DIR1_Pin, DIR2_Pin);
   control_INIT(&controller, 100.0f, 60.0f, 5.0f, 0.5f);
-  const unsigned char* msg = U"21.37";
+  LCD_Put_Cursor(0,0);
+  LCD_Send_data('a');
+
+  msg_len = sizeof("R00.0\r");
+  HAL_UART_Receive_IT(&huart3, rx_buffer, 6);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -160,13 +175,15 @@ int main(void)
   while (1)
   {
 	  lmao = control_GET_SIGNAL(&controller, value, y_ref);
+	  snprintf(lcdbuffer, sizeof(lcdbuffer),"Distance: %.2f", value);
+	  //status = HAL_UART_Transmit(&huart3, (uint8_t*)lcdbuffer, strlen(lcdbuffer), 10);
+	  //HAL_Delay(500);
 
-	  HAL_UART_Transmit(&huart2, msg, sizeof(msg), 10);
-	  HAL_Delay(100);
-
-	  //Motor_MOVE(&motor, lmao);
-
-	  //HAL_Delay(10);
+	  Motor_MOVE(&motor, lmao);
+	  if(HAL_UART_Receive(&huart3, rx_buffer, msg_len, 10) == HAL_OK){
+		  jebac_usart = 69.0f;
+	  }
+	  HAL_Delay(50);
 
 
     /* USER CODE END WHILE */
