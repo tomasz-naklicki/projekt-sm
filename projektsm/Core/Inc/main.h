@@ -82,8 +82,6 @@ void Error_Handler(void);
 #define DIR1_GPIO_Port GPIOB
 #define DIR2_Pin GPIO_PIN_2
 #define DIR2_GPIO_Port GPIOB
-#define ECHOB10_Pin GPIO_PIN_10
-#define ECHOB10_GPIO_Port GPIOB
 #define GPIO_PIN_1_Pin GPIO_PIN_14
 #define GPIO_PIN_1_GPIO_Port GPIOD
 #define GPIO_PIN_2_Pin GPIO_PIN_15
