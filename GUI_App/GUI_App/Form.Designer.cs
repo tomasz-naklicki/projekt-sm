@@ -28,9 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.portNameLabel = new System.Windows.Forms.Label();
             this.portNameComboBox = new System.Windows.Forms.ComboBox();
             this.connectButton = new System.Windows.Forms.Button();
@@ -39,8 +38,8 @@
             this.inputTextBox = new System.Windows.Forms.TextBox();
             this.inputLabel = new System.Windows.Forms.Label();
             this.outputLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.clearOutputButton = new System.Windows.Forms.Button();
+            this.outputTextBox = new System.Windows.Forms.TextBox();
+            this.clearButton = new System.Windows.Forms.Button();
             this.sendButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.distanceChart)).BeginInit();
             this.SuspendLayout();
@@ -70,33 +69,40 @@
             this.connectButton.TabIndex = 3;
             this.connectButton.Text = "Connect";
             this.connectButton.UseVisualStyleBackColor = true;
-            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
+            this.connectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
             // disconnectButton
             // 
+            this.disconnectButton.Enabled = false;
             this.disconnectButton.Location = new System.Drawing.Point(89, 50);
             this.disconnectButton.Name = "disconnectButton";
             this.disconnectButton.Size = new System.Drawing.Size(75, 23);
             this.disconnectButton.TabIndex = 4;
             this.disconnectButton.Text = "Disconnect";
             this.disconnectButton.UseVisualStyleBackColor = true;
-            this.disconnectButton.Click += new System.EventHandler(this.disconnectButton_Click);
+            this.disconnectButton.Click += new System.EventHandler(this.DisconnectButton_Click);
             // 
             // distanceChart
             // 
-            chartArea3.Name = "ChartArea1";
-            this.distanceChart.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.distanceChart.Legends.Add(legend3);
+            chartArea5.AxisX.MajorGrid.Enabled = false;
+            chartArea5.AxisX2.MajorGrid.Enabled = false;
+            chartArea5.AxisY2.MajorGrid.Enabled = false;
+            chartArea5.Name = "ChartArea";
+            this.distanceChart.ChartAreas.Add(chartArea5);
             this.distanceChart.Location = new System.Drawing.Point(321, 12);
             this.distanceChart.Name = "distanceChart";
             this.distanceChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.SeaGreen;
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.distanceChart.Series.Add(series3);
+            series5.BorderWidth = 4;
+            series5.ChartArea = "ChartArea";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.IsVisibleInLegend = false;
+            series5.Name = "Series";
+            series5.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Double;
+            series5.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Double;
+            this.distanceChart.Series.Add(series5);
             this.distanceChart.Size = new System.Drawing.Size(467, 426);
             this.distanceChart.TabIndex = 5;
+            this.distanceChart.TabStop = false;
             this.distanceChart.Text = "distanceChart";
             // 
             // inputTextBox
@@ -124,22 +130,26 @@
             this.outputLabel.TabIndex = 8;
             this.outputLabel.Text = "Output";
             // 
-            // textBox1
+            // outputTextBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(89, 192);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(187, 217);
-            this.textBox1.TabIndex = 9;
+            this.outputTextBox.AcceptsReturn = true;
+            this.outputTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.outputTextBox.Location = new System.Drawing.Point(89, 192);
+            this.outputTextBox.Multiline = true;
+            this.outputTextBox.Name = "outputTextBox";
+            this.outputTextBox.ReadOnly = true;
+            this.outputTextBox.Size = new System.Drawing.Size(187, 217);
+            this.outputTextBox.TabIndex = 9;
             // 
-            // clearOutputButton
+            // clearButton
             // 
-            this.clearOutputButton.Location = new System.Drawing.Point(201, 415);
-            this.clearOutputButton.Name = "clearOutputButton";
-            this.clearOutputButton.Size = new System.Drawing.Size(75, 23);
-            this.clearOutputButton.TabIndex = 10;
-            this.clearOutputButton.Text = "Clear";
-            this.clearOutputButton.UseVisualStyleBackColor = true;
+            this.clearButton.Location = new System.Drawing.Point(201, 415);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(75, 23);
+            this.clearButton.TabIndex = 10;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // sendButton
             // 
@@ -149,6 +159,7 @@
             this.sendButton.TabIndex = 11;
             this.sendButton.Text = "Send";
             this.sendButton.UseVisualStyleBackColor = true;
+            this.sendButton.Click += new System.EventHandler(this.SendButton_Click);
             // 
             // Form
             // 
@@ -156,8 +167,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.sendButton);
-            this.Controls.Add(this.clearOutputButton);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.clearButton);
+            this.Controls.Add(this.outputTextBox);
             this.Controls.Add(this.outputLabel);
             this.Controls.Add(this.inputLabel);
             this.Controls.Add(this.inputTextBox);
@@ -167,7 +178,7 @@
             this.Controls.Add(this.portNameComboBox);
             this.Controls.Add(this.portNameLabel);
             this.Name = "Form";
-            this.Text = "Form1";
+            this.Text = "GUI";
             ((System.ComponentModel.ISupportInitialize)(this.distanceChart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -184,8 +195,8 @@
         private System.Windows.Forms.TextBox inputTextBox;
         private System.Windows.Forms.Label inputLabel;
         private System.Windows.Forms.Label outputLabel;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button clearOutputButton;
+        private System.Windows.Forms.TextBox outputTextBox;
+        private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.Button sendButton;
     }
 }
